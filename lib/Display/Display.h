@@ -13,8 +13,6 @@ public:
     void updateTargetTemperature(int newTargetTemperature);
     void updateCurrentTemperature(double newCurrentTemperature);
     void updateBoilerStatus(bool isBoilerOn);
-    /// @brief Show the current set point and true value on the display.
-    void show(); 
 
 private:
     Adafruit_SSD1306* display;
@@ -24,6 +22,9 @@ private:
     int targetTemperature;
     double currentTemperature;
     bool boilerOn;
+
+    /// @brief Update all the display with the current set point and true value.
+    void updateAll(); 
 };
 
 #endif

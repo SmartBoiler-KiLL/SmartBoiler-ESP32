@@ -18,13 +18,15 @@ double TemperatureSensor::getVCC() {
 }
 
 double TemperatureSensor::readTemperature(uint8_t channel) {
-    int16_t rawADC = ads->readADC_SingleEnded(channel);
+    // TODO: Remove the comments when using the real sensor
+    // int16_t rawADC = ads->readADC_SingleEnded(channel);
     
-    double vOut = (rawADC * 0.256) / 32767.0;
-    double R_PT100 = (-vOut * R_FIXED) / (vOut - 3.3);
-    double rawTemperature = (R_PT100 - R0) / (alpha * R0);
+    // double vOut = (rawADC * 0.256) / 32767.0;
+    // double R_PT100 = (-vOut * R_FIXED) / (vOut - 3.3);
+    // double rawTemperature = (R_PT100 - R0) / (alpha * R0);
     
-    return getFilteredTemperature(abs(rawTemperature));
+    // return getFilteredTemperature(abs(rawTemperature));
+    return random(23, 66);
 }
 
 double TemperatureSensor::getFilteredTemperature(double newReading) {

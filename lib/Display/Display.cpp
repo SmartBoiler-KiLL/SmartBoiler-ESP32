@@ -18,25 +18,25 @@ void Display::beginDisplay(int initialTargetTemperature, double currentTemperatu
     display->display();
     targetTemperature = initialTargetTemperature;
     currentTemperature = currentTemperature;
-    show();
+    updateAll();
 }
 
 void Display::updateTargetTemperature(int newTargetTemperature) {
     targetTemperature = newTargetTemperature;
-    show();
+    updateAll();
 }
 
 void Display::updateCurrentTemperature(double newCurrentTemperature) {
     currentTemperature = newCurrentTemperature;
-    show();
+    updateAll();
 }
 
 void Display::updateBoilerStatus(bool isBoilerOn) {
     boilerOn = isBoilerOn;
-    show();
+    updateAll();
 }
 
-void Display::show() {
+void Display::updateAll() {
     display->clearDisplay();
 
     display->setTextSize(2);

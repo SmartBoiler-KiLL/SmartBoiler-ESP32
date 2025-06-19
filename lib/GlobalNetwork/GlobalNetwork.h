@@ -39,7 +39,6 @@ private:
     void onWiFiEvent(WiFiEvent_t event);
     /// @brief Handles WebSocket events
     void webSocketEvent(WStype_t type, uint8_t* payload, size_t length);
-    /// @brief Connects to the server using WebSocket
     void connectWebSocket();
 };
 

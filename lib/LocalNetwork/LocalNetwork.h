@@ -4,7 +4,7 @@
 #include <ArduinoJson.h>
 #include <ESPmDNS.h>
 #include <WiFi.h>
-#include <WebServer.h>
+#include <WebSocketsServer.h>
 
 class KiLL;
 
@@ -23,22 +23,16 @@ public:
     void startServer();
     void stopServer();
 
-    void keepServerAlive();
-
     void setupLocalNetwork();
 
     const String getHostname();
 
 private:
-    /// @brief Maximum number of MDNS retries
     static constexpr uint8_t MAX_MDNS_RETRIES = 10;
-    /// @brief HTTP port
-    static constexpr uint8_t HTTP_PORT = 80;
+    static constexpr uint8_t WEBSOCKET_PORT = 81;
     
-    /// @brief Local web server instance
-    WebServer server;
+    WebSocketsServer webSocketServer;
 
-    /// @brief Local network SSID
     const String SSID();
 
     static void onStationConnected(WiFiEvent_t event, WiFiEventInfo_t info);
@@ -46,24 +40,33 @@ private:
 
     Boiler& boiler;
     Display& display;
-    /// MARK: Routes
 
-    bool checkRequestData(JsonDocument& document, const String source);
+    /// @brief Handles WebSocket events
+    void webSocketEvent(uint8_t num, WStype_t type, uint8_t* payload, size_t length);
+    /// @brief Processes incoming WebSocket messages
+    void handleWebSocketMessage(uint8_t num, const String& message);
+    /// @brief Sends response via WebSocket
+    void sendWebSocketResponse(uint8_t num, const String& response);
+    
+    /// MARK: Message Handlers
+    bool checkRequestData(JsonDocument& document, const String& message, const String source);
+    void handleRootMessage(uint8_t num);
+    void handleLocalMessage(uint8_t num);
+    void handleSetupMessage(uint8_t num, JsonDocument& document);
+    void handleResetFactoryMessage(uint8_t num, JsonDocument& document);
+    void handleCommandMessage(uint8_t num, JsonDocument& document);
+    void handleStatusMessage(uint8_t num, JsonDocument& document);
 
-    /// @brief Root to check if the ESP32 is reachable
-    void handleRoot();
-    /// @brief Root to get the SSID of the local network
-    void handleLocal();
-    /// @brief Root for not found
-    void handleNotFound();
-    /// @brief Root to setup the KiLL
-    void handleSetup();
-    /// @brief Root to reset the ESP32 to factory settings
-    void handleResetFactory();
-    /// @brief Root to manage commands for turning on/off and setting the temperature
-    void handleCommand();
-    /// @brief Root to get the status of the Boiler
-    void handleStatus();
+    /// MARK: Responses
+    static const String STATUS_RESPONSE(const String message);
+    static const String OK_RESPONSE;
+    static const String ERROR_RESPONSE(const String message);
+    static const String MISSING_AUTHENTICATION_RESPONSE;
+
+    /// @brief Task handle for WebSocket server
+    TaskHandle_t webSocketTaskHandle = NULL;
+    /// @brief Static task function for WebSocket server
+    static void webSocketTask(void* parameter);
 };
 
 #endif
